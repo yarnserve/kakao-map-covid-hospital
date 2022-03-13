@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <title>호흡기 진료 병의원 상세정보</title>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <header>
+      <h1>호흡기 진료 병·의원 상세정보</h1>
+      <ul>
+        <li>카카오맵 API</li>
+        <li>공공데이타 오픈 API - 건강보험심사평가원 제공</li>
+      </ul>
+    </header>
+
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1415168117074e15a39d4dda76b21c67&libraries=clusterer"></script>
+
+    <script>
+      var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+          center: new kakao.maps.LatLng(36.320127449500795, 128.03143942300625), // 지도의 중심좌표
+          level: 12 // 지도의 확대 레벨
+        }
+
+      // 지도를 생성한다
+      var map = new kakao.maps.Map(mapContainer, mapOption)
+
+      var clusterer = new kakao.maps.MarkerClusterer({
+        map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+        averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+        minLevel: 10, // 클러스터 할 최소 지도 레벨
+        disableClickZoom: true // 클러스터 마커를 클릭했을 때 지도가 확대되지 않도록 설정한다
+      })
+
+      const key = 'dQq96tvPZFXHNeU8CVsihwjv7cuaRHvTNkdsInBObLpSwQhdZUisp4RmS8UQ39rCLCJ6972wcimi7m5x%2FuOmGg%3D%3D'
+      const url = `http://apis.data.go.kr/B551182/rprtHospService/getRprtHospService?serviceKey=${key}&numOfRows=285`
+
+      axios(url).then(res => {
+        data = res.data.response.body.items.item
+        let markers = []
+
+        data.map(item => {
+          var marker = new kakao.maps.Marker({
+            map: map,
+            position: new kakao.maps.LatLng(item.YPosWgs84, item.XPosWgs84)
+          })
+
+          markers.push(marker)
+
+          // 인포 윈도우
+          var infowindow = new kakao.maps.InfoWindow({
+            position: marker.position,
+            content: `<div class="info">
+                        <div class="info_title">${item.yadmNm}</div>
+                        <ul class="list">
+                          <li>${item.addr}</li>
+                          <li>${item.telno}</li>
+                        </ul>
+                      </div>`,
+            removable: true
+          })
+
+          // 마커에 클릭이벤트를 등록합니다
+          kakao.maps.event.addListener(marker, 'click', function () {
+            // 마커 위에 인포윈도우를 표시합니다
+            infowindow.open(map, marker)
+            var info = $('.info')
+            info.parent().parent('div').css({ border: 'none', height: 'auto' })
+          })
+        })
+
+        clusterer.addMarkers(markers)
+      })
+
+      kakao.maps.event.addListener(clusterer, 'clusterclick', function (cluster) {
+        // 현재 지도 레벨에서 1레벨 확대한 레벨
+        var level = map.getLevel() - 1
+
+        // 지도를 클릭된 클러스터의 마커의 위치를 기준으로 확대합니다
+        map.setLevel(level, { anchor: cluster.getCenter() })
+      })
+    </script>
+  </body>
+</html>
