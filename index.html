@@ -40,7 +40,7 @@
       })
 
       const key = 'dQq96tvPZFXHNeU8CVsihwjv7cuaRHvTNkdsInBObLpSwQhdZUisp4RmS8UQ39rCLCJ6972wcimi7m5x%2FuOmGg%3D%3D'
-      const url = `http://apis.data.go.kr/B551182/rprtHospService/getRprtHospService?serviceKey=${key}&numOfRows=285`
+      const url = `https://apis.data.go.kr/B551182/rprtHospService/getRprtHospService?serviceKey=${key}&numOfRows=285`
 
       axios(url).then(res => {
         data = res.data.response.body.items.item
