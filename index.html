@@ -38,11 +38,11 @@
         disableClickZoom: true // 클러스터 마커를 클릭했을 때 지도가 확대되지 않도록 설정한다
       })
 
-      const key = 'dQq96tvPZFXHNeU8CVsihwjv7cuaRHvTNkdsInBObLpSwQhdZUisp4RmS8UQ39rCLCJ6972wcimi7m5x%2FuOmGg%3D%3D'
-      const url = `http://apis.data.go.kr/B551182/rprtHospService/getRprtHospService?serviceKey=${key}&numOfRows=285`
+      // const key = 'dQq96tvPZFXHNeU8CVsihwjv7cuaRHvTNkdsInBObLpSwQhdZUisp4RmS8UQ39rCLCJ6972wcimi7m5x%2FuOmGg%3D%3D'
+      // const url = `http://apis.data.go.kr/B551182/rprtHospService/getRprtHospService?serviceKey=${key}&numOfRows=285`
 
-      axios(url).then(res => {
-        data = res.data.response.body.items.item
+      axios('./data.json').then(res => {
+        const data = res.data.item
         let markers = []
 
         data.map(item => {
